@@ -9,9 +9,8 @@ public class TestLatch {
 		
 		int nThreadA = 1;
 		int nThreadB = 10;
-		
-		/* this latch is not working */
-		Latch latch = new FakeLatch();
+
+		Latch latch = new LatchImpl2(nThreadB);
 		
 		List<ThreadA> threadsAlist = new ArrayList<ThreadA>();
 		for (int i = 0; i < nThreadA; i++) {
