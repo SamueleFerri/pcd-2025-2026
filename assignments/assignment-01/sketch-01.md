@@ -21,7 +21,7 @@ The board state involves a sequence of steps:
   - collision with boundaries is checked
 - then, collisions among small balls are checked
   - the check is done by a nested loop, checking each body with all other bodies (but only once)
-- checking collisions between the player ball and small balls 
+- then, collision between the player ball and small balls is checked
 
 ### About Physics
 
