@@ -13,6 +13,11 @@ v1.0.0-20260330
 - **[Lab Notes] Virtual Threads**
    - Examples – `pcd.lab06.virtual_threads`
 
+### Asynchronous Programming in JavaScript (First part)
+
+- Discussing the examples in module-2.1 using a Playground
+- Introducing promises (module-2.1)
+
 ### Asynchronous Programming in Java using Vert.x
 
 - [Vert.x Framework](http://vertx.io/)
