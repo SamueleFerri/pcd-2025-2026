@@ -69,34 +69,59 @@ public class ViewFrame extends JFrame {
     		g2.drawLine(ox,0,ox,oy*2);
     		g2.drawLine(0,oy,ox*2,oy);
     		g2.setColor(Color.BLACK);
-    		
-    		    g2.setStroke(new BasicStroke(1));
-	    		for (var b: model.getBalls()) {
-	    			var p = b.pos();
-	            	int x0 = (int)(ox + p.x()*delta);
-	                int y0 = (int)(oy - p.y()*delta);
-	                int radiusX = (int)(b.radius()*delta);
-	                int radiusY = (int)(b.radius()*delta);
-	                g2.drawOval(x0 - radiusX,y0 - radiusY,radiusX*2,radiusY*2);
-	    		}
-	
-    		    g2.setStroke(new BasicStroke(3));
-	    		var pb = model.getPlayerBall();
-	    		if (pb != null) {
-					var p1 = pb.pos();
-		        	int x0 = (int)(ox + p1.x()*delta);
-		            int y0 = (int)(oy - p1.y()*delta);
-	                int radiusX = (int)(pb.radius()*delta);
-	                int radiusY = (int)(pb.radius()*delta);
-	                g2.drawOval(x0 - radiusX,y0 - radiusY,radiusX*2,radiusY*2);
-	    		}
-    		    
-    		    g2.setStroke(new BasicStroke(1));
-	    		g2.drawString("Num small balls: " + model.getBalls().size(), 20, 40);
-	    		g2.drawString("Frame per sec: " + model.getFramePerSec(), 20, 60);
+			g2.setStroke(new BasicStroke(1));
+			for (var b: model.getBalls()) {
+				var p = b.pos();
+				int x0 = (int)(ox + p.x()*delta);
+				int y0 = (int)(oy - p.y()*delta);
+				int radiusX = (int)(b.radius()*delta);
+				int radiusY = (int)(b.radius()*delta);
+				g2.drawOval(x0 - radiusX,y0 - radiusY,radiusX*2,radiusY*2);
+			}
 
-	    		sync.notifyFrameRendered();
-    		
+			g2.setStroke(new BasicStroke(3));
+			var pb = model.getPlayerBall();
+			if (pb != null) {
+				var p1 = pb.pos();
+				int x0 = (int)(ox + p1.x()*delta);
+				int y0 = (int)(oy - p1.y()*delta);
+				int radiusX = (int)(pb.radius()*delta);
+				int radiusY = (int)(pb.radius()*delta);
+				g2.drawOval(x0 - radiusX,y0 - radiusY,radiusX*2,radiusY*2);
+			}
+
+			g2.setColor(Color.DARK_GRAY);
+			if (model.getHoles() != null) {
+				for (var h: model.getHoles()) {
+					var p = h.pos();
+					int x0 = (int)(ox + p.x()*delta);
+					int y0 = (int)(oy - p.y()*delta);
+					int radiusX = (int)(h.radius()*delta);
+					int radiusY = (int)(h.radius()*delta);
+					g2.fillOval(x0 - radiusX, y0 - radiusY, radiusX*2, radiusY*2);
+				}
+			}
+
+			var bb = model.getBotBall();
+			if (bb != null) {
+				g2.setColor(Color.RED);
+				g2.setStroke(new BasicStroke(3));
+				var p1 = bb.pos();
+				int x0 = (int)(ox + p1.x()*delta);
+				int y0 = (int)(oy - p1.y()*delta);
+				int radiusX = (int)(bb.radius()*delta);
+				int radiusY = (int)(bb.radius()*delta);
+				g2.drawOval(x0 - radiusX, y0 - radiusY, radiusX*2, radiusY*2);
+			}
+
+			g2.setColor(Color.BLACK);
+			g2.setStroke(new BasicStroke(1));
+			int panelWidth = this.getWidth();
+			int panelHeight = this.getHeight();
+			g2.drawString("Num small balls: " + model.getBalls().size(), panelWidth - 150, panelHeight - 40);
+			g2.drawString("Frame per sec: " + model.getFramePerSec(), panelWidth - 150, panelHeight - 20);
+
+			sync.notifyFrameRendered();
         }
         
     }

@@ -11,6 +11,16 @@ public class LargeBoardConf implements BoardConf {
 	}
 
 	@Override
+	public Ball getBotBall() {
+		return null;
+	}
+
+	@Override
+	public List<Hole> getHoles() {
+		return List.of();
+	}
+
+	@Override
 	public List<Ball> getSmallBalls() {		
 		var ballRadius = 0.01;
         var balls = new ArrayList<Ball>();
