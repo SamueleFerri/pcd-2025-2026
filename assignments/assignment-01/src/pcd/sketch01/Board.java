@@ -10,6 +10,7 @@ public class Board {
     private List<Hole> holes;
     private Ball botBall;
     private int score;
+    private GameState state;
     
     public Board(){} 
     
@@ -19,9 +20,14 @@ public class Board {
     	bounds = conf.getBoardBoundary();
         holes = conf.getHoles();
         botBall = conf.getBotBall();
+        state = GameState.PLAYING;
     }
     
     public void updateState(long dt) {
+
+        if (state != GameState.PLAYING) {
+            return;
+        }
 
     	playerBall.updateState(dt, this);
     	
@@ -54,6 +60,29 @@ public class Board {
         }
 
         balls.removeAll(ballsToRemove);
+
+        if (playerBall != null) {
+            for (var h : holes) {
+                double dist = Math.hypot(playerBall.getPos().x() - h.pos().x(), playerBall.getPos().y() - h.pos().y());
+                if (dist < h.radius()) {
+                    state = GameState.BOT_WON;
+                }
+            }
+        }
+
+        if (botBall != null) {
+            for (var h : holes) {
+                double dist = Math.hypot(botBall.getPos().x() - h.pos().x(), botBall.getPos().y() - h.pos().y());
+                if (dist < h.radius()) {
+                    state = GameState.PLAYER_WON;
+                }
+            }
+        }
+
+        if (balls.isEmpty()) {
+            // if(playerScore > botScore)...
+            state = GameState.PLAYER_WON;
+        }
     }
 
     public List<Ball> getBalls(){
@@ -77,4 +106,6 @@ public class Board {
     public Ball getBotBall() {
         return botBall;
     }
+
+    public GameState getGameState() { return state; }
 }

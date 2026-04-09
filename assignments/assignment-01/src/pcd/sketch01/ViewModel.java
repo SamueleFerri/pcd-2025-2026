@@ -7,21 +7,25 @@ record BallViewInfo(P2d pos, double radius) {}
 
 public class ViewModel {
 
-	private ArrayList<BallViewInfo> balls;
+	private final ArrayList<BallViewInfo> balls;
 	private BallViewInfo player;
 	private int framePerSec;
 	private List<Hole> holes;
 	private BallViewInfo botBall;
 	private int score;
+	private GameState state;
 	
 	public ViewModel() {
 		balls = new ArrayList<BallViewInfo>();
 		framePerSec = 0;
 		score = 0;
+		state = GameState.PLAYING;
 	}
 	
 	public synchronized void update(Board board, int framePerSec) {
 		balls.clear();
+		this.score = board.getScore();
+		this.state = board.getGameState();
 		for (var b: board.getBalls()) {
 			balls.add(new BallViewInfo(b.getPos(), b.getRadius()));
 		}
@@ -61,4 +65,6 @@ public class ViewModel {
 	public synchronized BallViewInfo getBotBall() { return botBall; }
 
 	public synchronized int getScore() { return score; }
+
+	public synchronized GameState getState() { return state; }
 }

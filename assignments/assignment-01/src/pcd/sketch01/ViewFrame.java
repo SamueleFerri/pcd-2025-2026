@@ -122,6 +122,28 @@ public class ViewFrame extends JFrame {
 			g2.drawString("Frame per sec: " + model.getFramePerSec(), panelWidth - 150, panelHeight - 20);
 			g2.drawString("Score: " + model.getScore(), panelWidth - 150, panelHeight - 60);
 
+			GameState currentState = model.getState();
+			if (currentState != GameState.PLAYING) {
+				g2.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 40));
+				String msg = "";
+
+				if (currentState == GameState.PLAYER_WON) {
+					g2.setColor(Color.GREEN);
+					msg = "PLAYER WON!";
+				} else if (currentState == GameState.BOT_WON) {
+					g2.setColor(Color.RED);
+					msg = "BOT WON!";
+				} else if (currentState == GameState.TIE) {
+					g2.setColor(Color.BLUE);
+					msg = "TIE!";
+				}
+				//center test
+				java.awt.FontMetrics fm = g2.getFontMetrics();
+				int textWidth = fm.stringWidth(msg);
+				int textHeight = fm.getAscent();
+				g2.drawString(msg, (panelWidth - textWidth) / 2, (panelHeight + textHeight) / 2);
+			}
+
 			sync.notifyFrameRendered();
         }
         
