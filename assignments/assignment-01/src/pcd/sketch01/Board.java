@@ -9,6 +9,7 @@ public class Board {
     private Boundary bounds;
     private List<Hole> holes;
     private Ball botBall;
+    private int score;
     
     public Board(){} 
     
@@ -35,8 +36,24 @@ public class Board {
         }
     	for (var b: balls) {
     		Ball.resolveCollision(playerBall, b);
-    	} 
-    	   	    	
+    	}
+
+        List<Ball> ballsToRemove = new ArrayList<>();
+        for (var b: balls) {
+            for (var h: holes) {
+                double dx = b.getPos().x() - h.pos().x();
+                double dy = b.getPos().y() - h.pos().y();
+                double dist = Math.hypot(dx, dy);
+
+                if (dist < h.radius()) {
+                    ballsToRemove.add(b);
+                    score++;
+                    break;
+                }
+            }
+        }
+
+        balls.removeAll(ballsToRemove);
     }
 
     public List<Ball> getBalls(){
@@ -54,6 +71,8 @@ public class Board {
     public List<Hole> getHoles() {
         return holes;
     }
+
+    public int getScore() { return score; }
 
     public Ball getBotBall() {
         return botBall;

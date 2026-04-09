@@ -120,6 +120,7 @@ public class ViewFrame extends JFrame {
 			int panelHeight = this.getHeight();
 			g2.drawString("Num small balls: " + model.getBalls().size(), panelWidth - 150, panelHeight - 40);
 			g2.drawString("Frame per sec: " + model.getFramePerSec(), panelWidth - 150, panelHeight - 20);
+			g2.drawString("Score: " + model.getScore(), panelWidth - 150, panelHeight - 60);
 
 			sync.notifyFrameRendered();
         }

@@ -12,10 +12,12 @@ public class ViewModel {
 	private int framePerSec;
 	private List<Hole> holes;
 	private BallViewInfo botBall;
+	private int score;
 	
 	public ViewModel() {
 		balls = new ArrayList<BallViewInfo>();
 		framePerSec = 0;
+		score = 0;
 	}
 	
 	public synchronized void update(Board board, int framePerSec) {
@@ -56,5 +58,7 @@ public class ViewModel {
 
 	public synchronized List<Hole> getHoles() { return holes; }
 
-	public synchronized  BallViewInfo getBotBall() { return botBall; }
+	public synchronized BallViewInfo getBotBall() { return botBall; }
+
+	public synchronized int getScore() { return score; }
 }
