@@ -8,13 +8,11 @@ public class View {
 
 	private final ViewFrame frame;
 	private final ViewModel viewModel;
-	private final BlockingQueue<Cmd> cmdQueue;
 	
 	public View(ViewModel model, int w, int h) {
 		frame = new ViewFrame(model, w, h);	
 		frame.setVisible(true);
 		this.viewModel = model;
-		this.cmdQueue = new ArrayBlockingQueue<>(100);
 	}
 		
 	public void render() {
@@ -25,5 +23,5 @@ public class View {
 		return viewModel;
 	}
 
-	public BlockingQueue<Cmd> getCmdQueue() { return cmdQueue; }
+	public BlockingQueue<Cmd> getCmdQueue() { return frame.getCmdQueue(); }
 }

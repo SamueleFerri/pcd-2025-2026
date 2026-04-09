@@ -14,7 +14,7 @@ public class StrikeCmd implements Cmd {
         if (playerBall != null) {
             //checking if the ball is not moving
             if (playerBall.getVel().abs() < 0.001) {
-                playerBall.setVel(velocity);
+                playerBall.kick(velocity);
             }
         }
     }

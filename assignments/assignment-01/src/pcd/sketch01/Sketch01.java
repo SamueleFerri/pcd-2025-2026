@@ -3,7 +3,6 @@ package pcd.sketch01;
 import java.util.Random;
 
 public class Sketch01 {
-
 	
 	public static void main(String[] argv) {
 
@@ -35,28 +34,33 @@ public class Sketch01 {
 		var pb = board.getPlayerBall();
 		var rand = new Random(2);
 		var lastKickTime = t0;
-				
-		/* main simulation loop */
-		
-		while (true){			
-		
-			/* if the player ball is stopped and 5 secs have elapsed, then kick the player ball */
 
-			if (pb.getVel().abs() < 0.05 && System.currentTimeMillis() - lastKickTime > 2000) {
-				var angle = rand.nextDouble()*Math.PI*0.25;
-				var v = new V2d(Math.cos(angle),Math.sin(angle)).mul(1.5);
-				pb.kick(v);
+		while (true){
+
+			// player input
+			Cmd cmd = view.getCmdQueue().poll();
+			while (cmd != null) {
+				cmd.execute(board);
+				cmd = view.getCmdQueue().poll();
+			}
+
+			// old random shot adapted to bot logic
+			var bb = board.getBotBall();
+			// if the ball of the bot exist, is not moving, and have passed 2 sec from the last shot
+			if (bb != null && bb.getVel().abs() < 0.05 && System.currentTimeMillis() - lastKickTime > 2000) {
+				// bot shooting in random direction (Math,PI * 2 = 360 degree)
+				var angle = rand.nextDouble() * Math.PI * 2;
+				var v = new V2d(Math.cos(angle), Math.sin(angle)).mul(1.5);
+				bb.kick(v);
 				lastKickTime = System.currentTimeMillis();
 			}
-			
-			/* update board state */
-			
+
+			// update physics
 			long elapsed = System.currentTimeMillis() - lastUpdateTime;
-			lastUpdateTime = System.currentTimeMillis();			
+			lastUpdateTime = System.currentTimeMillis();
 			board.updateState(elapsed);
-			
-			/* render */
-			
+
+			// render
 			nFrames++;
 			int framePerSec = 0;
 			long dt = (System.currentTimeMillis() - t0);
@@ -64,10 +68,11 @@ public class Sketch01 {
 				framePerSec = (int)(nFrames*1000/dt);
 			}
 
-			viewModel.update(board, framePerSec);			
+			viewModel.update(board, framePerSec);
 			view.render();
-			
+
 		}
+
 	}
 	
 	private static void waitAbit() {
