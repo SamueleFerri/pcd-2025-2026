@@ -8,16 +8,22 @@ import java.awt.RenderingHints;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 public class ViewFrame extends JFrame {
     
-    private VisualiserPanel panel;
-    private ViewModel model;
-    private RenderSynch sync;
+    private final VisualiserPanel panel;
+    private final ViewModel model;
+    private final RenderSynch sync;
+	private BlockingQueue<Cmd> cmdQueue;
     
     public ViewFrame(ViewModel model, int w, int h){
     	this.model = model;
     	this.sync = new RenderSynch();
+		this.cmdQueue = new ArrayBlockingQueue<>(100);
     	setTitle("Sketch 03");
         setSize(w,h + 25);
         setResizable(false);
@@ -44,15 +50,48 @@ public class ViewFrame extends JFrame {
     }
         
     public class VisualiserPanel extends JPanel {
-        private int ox;
-        private int oy;
-        private int delta;
+        private final int ox;
+        private final int oy;
+        private final int delta;
         
         public VisualiserPanel(int w, int h){
             setSize(w,h + 25);
             ox = w/2;
             oy = h/2;
             delta = Math.min(ox, oy);
+
+			MouseAdapter mouseHandler = new MouseAdapter() {
+				private java.awt.Point startPoint;
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					//the start of the click
+					startPoint = e.getPoint();
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					if (startPoint == null) return;
+
+					java.awt.Point endPoint = e.getPoint();
+					// determinate the strength of the shot in base of the dragged distance
+					// small multiplier factor
+					double factor = 0.005;
+
+					// if the shot is Left-Low the ball should go Right-High
+					double vx = (startPoint.x - endPoint.x) * factor;
+					double vy = (endPoint.y - startPoint.y) * factor;
+
+					V2d velocity = new V2d(vx, vy);
+					boolean success = cmdQueue.offer(new StrikeCmd(velocity));
+					if (!success) {
+						System.out.println("Warning: cmdQueue id full! Command ignored. ");
+					}
+				}
+			};
+
+			this.addMouseListener(mouseHandler);
+			this.addMouseMotionListener(mouseHandler);
         }
 
         public void paint(Graphics g){
@@ -148,4 +187,8 @@ public class ViewFrame extends JFrame {
         }
         
     }
+
+	public BlockingQueue<Cmd> getCmdQueue() {
+		return cmdQueue;
+	}
 }

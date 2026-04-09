@@ -150,4 +150,6 @@ public class Ball {
     	return radius;
     }
 
+    public void setVel(V2d vel) { this.vel = vel; }
+
 }
