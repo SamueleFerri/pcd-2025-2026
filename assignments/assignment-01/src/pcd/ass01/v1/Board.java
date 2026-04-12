@@ -25,7 +25,7 @@ public class Board {
         state = GameState.PLAYING;
     }
     
-    public void updateState(long dt) {
+    public synchronized void updateState(long dt) {
 
         if (state != GameState.PLAYING) {
             return;
@@ -126,29 +126,37 @@ public class Board {
         return Math.hypot(p1.x() - p2.x(), p1.y() - p2.y());
     }
 
-    public List<Ball> getBalls(){
-    	return balls;
+    public synchronized List<Ball> getBalls(){
+        //return a copy so the render has no problem if the engine modifies it
+        return new ArrayList<>(balls);
     }
 
-    public Ball getPlayerBall() {
+    public synchronized Ball getPlayerBall() {
     	return playerBall;
     }
 
-    public Boundary getBounds(){
+    public synchronized Boundary getBounds(){
         return bounds;
     }
 
-    public List<Hole> getHoles() {
-        return holes;
+    public synchronized List<Hole> getHoles() {
+        //good practice, no need
+        return new ArrayList<>(holes);
     }
 
-    public int getPlayerScore() { return playerScore; }
+    public synchronized void kickBotBall(V2d velocity) {
+        if (botBall != null) {
+            botBall.kick(velocity);
+        }
+    }
 
-    public int getBotScore() { return botScore; }
+    public synchronized int getPlayerScore() { return playerScore; }
 
-    public Ball getBotBall() {
+    public synchronized int getBotScore() { return botScore; }
+
+    public synchronized Ball getBotBall() {
         return botBall;
     }
 
-    public GameState getGameState() { return state; }
+    public synchronized GameState getGameState() { return state; }
 }
