@@ -150,6 +150,15 @@ public class Board {
         }
     }
 
+    public synchronized void kickPlayerBall(V2d velocity) {
+        if (playerBall != null) {
+            // checking if the ball is not moving
+            if (playerBall.getVel().abs() < 0.001) {
+                playerBall.kick(velocity);
+            }
+        }
+    }
+
     public synchronized int getPlayerScore() { return playerScore; }
 
     public synchronized int getBotScore() { return botScore; }
