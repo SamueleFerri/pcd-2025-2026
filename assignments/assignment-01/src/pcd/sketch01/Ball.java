@@ -5,7 +5,8 @@ public class Ball {
     private P2d pos;
     private V2d vel;
     private double radius;
-    private double mass;   
+    private double mass;
+    private int lastHitter = 1;
     
     private static double FRICTION_FACTOR = 0.25; 	/* 0 minimum */
     private static double RESTITUTION_FACTOR = 1; 
@@ -133,6 +134,9 @@ public class Ball {
         }
     }
 
+    public void setLastHitter(int hitter) { this.lastHitter = hitter; }
+
+    public int getLastHitter() { return lastHitter; }
     
     public P2d getPos(){        
     	return pos;

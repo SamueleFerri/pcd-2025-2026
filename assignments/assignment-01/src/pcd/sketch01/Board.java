@@ -9,7 +9,8 @@ public class Board {
     private Boundary bounds;
     private List<Hole> holes;
     private Ball botBall;
-    private int score;
+    private int playerScore;
+    private int botScore;
     private GameState state;
     
     public Board(){} 
@@ -30,18 +31,42 @@ public class Board {
         }
 
     	playerBall.updateState(dt, this);
+
+        if (botBall != null) {
+            botBall.updateState(dt, this);
+        }
     	
     	for (var b: balls) {
     		b.updateState(dt, this);
-    	}       	
+    	}
+
+        if (botBall != null) {
+            for (var b: balls) {
+                double dist = getDist(botBall.getPos(), b.getPos());
+                if (dist <= botBall.getRadius() + b.getRadius()) {
+                    b.setLastHitter(2);
+                }
+                Ball.resolveCollision(botBall, b);
+            }
+            if (playerBall != null) {
+                Ball.resolveCollision(playerBall, botBall);
+            }
+        }
     	
     	for (int i = 0; i < balls.size() - 1; i++) {
             for (int j = i + 1; j < balls.size(); j++) {
                 Ball.resolveCollision(balls.get(i), balls.get(j));
             }
         }
+
     	for (var b: balls) {
-    		Ball.resolveCollision(playerBall, b);
+            if (playerBall != null) {
+                double dist = getDist(playerBall.getPos(), b.getPos());
+                if (dist <= playerBall.getRadius() + b.getRadius()) {
+                    b.setLastHitter(1);
+                }
+                Ball.resolveCollision(playerBall, b);
+            }
     	}
 
         List<Ball> ballsToRemove = new ArrayList<>();
@@ -53,7 +78,11 @@ public class Board {
 
                 if (dist < h.radius()) {
                     ballsToRemove.add(b);
-                    score++;
+                    if (b.getLastHitter() == 2) {
+                        botScore++;
+                    } else {
+                        playerScore++;
+                    }
                     break;
                 }
             }
@@ -63,26 +92,37 @@ public class Board {
 
         if (playerBall != null) {
             for (var h : holes) {
-                double dist = Math.hypot(playerBall.getPos().x() - h.pos().x(), playerBall.getPos().y() - h.pos().y());
+                double dist = getDist(playerBall.getPos(), h.pos());
                 if (dist < h.radius()) {
                     state = GameState.BOT_WON;
+                    break;
                 }
             }
         }
 
         if (botBall != null) {
             for (var h : holes) {
-                double dist = Math.hypot(botBall.getPos().x() - h.pos().x(), botBall.getPos().y() - h.pos().y());
+                double dist = getDist(botBall.getPos(), h.pos());
                 if (dist < h.radius()) {
                     state = GameState.PLAYER_WON;
+                    break;
                 }
             }
         }
 
         if (balls.isEmpty()) {
-            // if(playerScore > botScore)...
-            state = GameState.PLAYER_WON;
+            if (playerScore > botScore) {
+                state = GameState.PLAYER_WON;
+            } else if (botScore > playerScore) {
+                state = GameState.BOT_WON;
+            } else {
+                state = GameState.TIE;
+            }
         }
+    }
+
+    private double getDist(P2d p1, P2d p2) {
+        return Math.hypot(p1.x() - p2.x(), p1.y() - p2.y());
     }
 
     public List<Ball> getBalls(){
@@ -101,7 +141,9 @@ public class Board {
         return holes;
     }
 
-    public int getScore() { return score; }
+    public int getPlayerScore() { return playerScore; }
+
+    public int getBotScore() { return botScore; }
 
     public Ball getBotBall() {
         return botBall;

@@ -12,19 +12,22 @@ public class ViewModel {
 	private int framePerSec;
 	private List<Hole> holes;
 	private BallViewInfo botBall;
-	private int score;
+	private int playerScore;
+	private int botScore;
 	private GameState state;
 	
 	public ViewModel() {
-		balls = new ArrayList<BallViewInfo>();
+		balls = new ArrayList<>();
 		framePerSec = 0;
-		score = 0;
+		playerScore = 0;
+		botScore = 0;
 		state = GameState.PLAYING;
 	}
 	
 	public synchronized void update(Board board, int framePerSec) {
 		balls.clear();
-		this.score = board.getScore();
+		this.playerScore = board.getPlayerScore();
+		this.botScore = board.getBotScore();
 		this.state = board.getGameState();
 		for (var b: board.getBalls()) {
 			balls.add(new BallViewInfo(b.getPos(), b.getRadius()));
@@ -46,9 +49,7 @@ public class ViewModel {
 	}
 	
 	public synchronized ArrayList<BallViewInfo> getBalls(){
-		var copy = new ArrayList<BallViewInfo>();
-		copy.addAll(balls);
-		return copy;
+        return new ArrayList<>(balls);
 		
 	}
 
@@ -64,7 +65,9 @@ public class ViewModel {
 
 	public synchronized BallViewInfo getBotBall() { return botBall; }
 
-	public synchronized int getScore() { return score; }
+	public synchronized int getPlayerScore() { return playerScore; }
+
+	public synchronized int getBotScore() { return botScore; }
 
 	public synchronized GameState getState() { return state; }
 }
